@@ -8,6 +8,9 @@ import android.location.Location;
 import ca.ubc.cs.cpsc210.translink.BusesAreUs;
 import ca.ubc.cs.cpsc210.translink.R;
 import ca.ubc.cs.cpsc210.translink.model.Stop;
+import ca.ubc.cs.cpsc210.translink.model.StopManager;
+import ca.ubc.cs.cpsc210.translink.util.Geometry;
+import ca.ubc.cs.cpsc210.translink.util.LatLon;
 import org.osmdroid.bonuspack.clustering.RadiusMarkerClusterer;
 import org.osmdroid.bonuspack.overlays.Marker;
 import org.osmdroid.views.MapView;
@@ -47,9 +50,28 @@ public class BusStopPlotter extends MapViewOverlay {
      * Mark all visible stops in stop manager onto map.
      */
     public void markStops(Location currentLocation) {
+        newStopClusterer();
         Drawable stopIconDrawable = activity.getResources().getDrawable(R.drawable.stop_icon);
+        updateVisibleArea();
+        Stop nearest = null;
+        if(nearestStnMarker!=null) {
+            stopClusterer.add(nearestStnMarker);
+            nearest  = (Stop) nearestStnMarker.getRelatedObject();
+        }
+        for(Stop s: StopManager.getInstance()){
+            if(Geometry.rectangleContainsPoint(super.northWest,super.southEast, s.getLocn()) && !s.equals(nearest)){
+                Marker m = new Marker(mapView);
+                m.setIcon(stopIconDrawable);
+                m.setPosition(Geometry.gpFromLL(s.getLocn()));
+                m.setRelatedObject(s);
+                m.setTitle(s.getNumber()+s.getName());
+                m.setInfoWindow(stopInfoWindow);
+                setMarker(s,m);
+                stopClusterer.add(m);
+            }
+        }
 
-        // TODO: complete the implementation of this method (Task 5)
+
     }
 
     /**
@@ -66,6 +88,7 @@ public class BusStopPlotter extends MapViewOverlay {
         Drawable clusterIconD = activity.getResources().getDrawable(R.drawable.stop_cluster);
         Bitmap clusterIcon = ((BitmapDrawable) clusterIconD).getBitmap();
         stopClusterer.setIcon(clusterIcon);
+
     }
 
     /**
@@ -77,8 +100,19 @@ public class BusStopPlotter extends MapViewOverlay {
     public void updateMarkerOfNearest(Stop nearest) {
         Drawable stopIconDrawable = activity.getResources().getDrawable(R.drawable.stop_icon);
         Drawable closestStopIconDrawable = activity.getResources().getDrawable(R.drawable.closest_stop_icon);
-
         // TODO: complete the implementation of this method (Task 6)
+        if(nearest != null){
+        nearestStnMarker = new Marker(mapView);
+        nearestStnMarker.setIcon(closestStopIconDrawable);
+        nearestStnMarker.setPosition(Geometry.gpFromLL(nearest.getLocn()));
+        nearestStnMarker.setRelatedObject(nearest);
+        nearestStnMarker.setTitle(nearest.getNumber()+nearest.getName());
+        nearestStnMarker.setInfoWindow(stopInfoWindow);
+        }
+        else
+            nearestStnMarker = null;
+
+
     }
 
     /**

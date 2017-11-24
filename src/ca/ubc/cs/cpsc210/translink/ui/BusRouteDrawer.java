@@ -2,9 +2,13 @@ package ca.ubc.cs.cpsc210.translink.ui;
 
 import android.content.Context;
 import ca.ubc.cs.cpsc210.translink.BusesAreUs;
+import ca.ubc.cs.cpsc210.translink.model.*;
+import ca.ubc.cs.cpsc210.translink.util.Geometry;
+import ca.ubc.cs.cpsc210.translink.util.LatLon;
 import org.osmdroid.DefaultResourceProxyImpl;
 import org.osmdroid.ResourceProxy;
 import org.osmdroid.bonuspack.overlays.Polyline;
+import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
 
 import java.util.ArrayList;
@@ -33,7 +37,31 @@ public class BusRouteDrawer extends MapViewOverlay {
      * Plot each visible segment of each route pattern of each route going through the selected stop.
      */
     public void plotRoutes(int zoomLevel) {
-        //TODO: complete the implementation of this method (Task 7)
+        // TODO: complete the implementation of this method (Task 7)
+        busRouteOverlays.clear();
+        updateVisibleArea();
+        busRouteLegendOverlay = createBusRouteLegendOverlay();
+        Stop selectedStop = StopManager.getInstance().getSelected();
+        if(selectedStop != null) {
+            for (Route r : selectedStop.getRoutes()) {
+                busRouteLegendOverlay.add(r.getNumber());
+                for(RoutePattern routePattern : r.getPatterns()) {
+                    List<GeoPoint> points = new ArrayList<>();
+                    for (LatLon l : routePattern.getPath()){
+                         if(Geometry.rectangleContainsPoint(super.northWest,super.southEast,
+                                 l)){
+                            points.add(Geometry.gpFromLL(l));
+                            Polyline p = new Polyline(super.context);
+                            p.setColor(busRouteLegendOverlay.getColor(r.getNumber()));
+                            p.setWidth(getLineWidth(zoomLevel));
+                            p.setPoints(points);
+                            busRouteOverlays.add(p);
+
+                       }
+                    }
+                }
+            }
+        }
     }
 
     public List<Polyline> getBusRouteOverlays() {

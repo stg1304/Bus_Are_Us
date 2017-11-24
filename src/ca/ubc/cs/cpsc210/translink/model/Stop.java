@@ -183,4 +183,6 @@ public class Stop implements Iterable<Arrival> {
     public void setLocn(LatLon locn) {
         this.locn = locn;
     }
+
+    public List<Arrival> getarrivals(){return arrivals;}
 }

@@ -9,6 +9,10 @@ import android.widget.ArrayAdapter;
 import android.widget.TextView;
 import ca.ubc.cs.cpsc210.translink.R;
 import ca.ubc.cs.cpsc210.translink.model.Arrival;
+import ca.ubc.cs.cpsc210.translink.model.Stop;
+import ca.ubc.cs.cpsc210.translink.model.StopManager;
+import ca.ubc.cs.cpsc210.translink.parsers.ArrivalsParser;
+import ca.ubc.cs.cpsc210.translink.providers.HttpArrivalDataProvider;
 
 import java.util.ArrayList;
 
@@ -36,7 +40,15 @@ public class ArrivalsListFragment extends ListFragment {
      */
     private ArrayList<Arrival> getArrivalsForSelectedStop() {
         // TODO: Complete the implementation of this method (Task 9)
-        return new ArrayList<>();
+        Stop s = StopManager.getInstance().getSelected();
+        HttpArrivalDataProvider p = new HttpArrivalDataProvider(s);
+        try {
+            ArrivalsParser.parseArrivals(s, p.dataSourceToString());
+        }catch(Exception e){
+            System.out.println("Exception");
+        }
+        ArrayList<Arrival> arrivals = (ArrayList<Arrival>) s.getarrivals();
+        return arrivals;
     }
 
     /**

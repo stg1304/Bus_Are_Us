@@ -2,6 +2,12 @@ package ca.ubc.cs.cpsc210.translink.ui;
 
 import android.content.Context;
 import ca.ubc.cs.cpsc210.translink.R;
+import ca.ubc.cs.cpsc210.translink.model.Bus;
+import ca.ubc.cs.cpsc210.translink.model.Stop;
+import ca.ubc.cs.cpsc210.translink.model.StopManager;
+import ca.ubc.cs.cpsc210.translink.parsers.BusParser;
+import ca.ubc.cs.cpsc210.translink.providers.HttpBusLocationDataProvider;
+import ca.ubc.cs.cpsc210.translink.util.Geometry;
 import org.osmdroid.DefaultResourceProxyImpl;
 import org.osmdroid.ResourceProxy;
 import org.osmdroid.views.MapView;
@@ -9,6 +15,7 @@ import org.osmdroid.views.overlay.ItemizedIconOverlay;
 import org.osmdroid.views.overlay.OverlayItem;
 
 import java.util.ArrayList;
+import java.util.List;
 
 // A plotter for bus locations
 public class BusLocationPlotter extends MapViewOverlay {
@@ -34,6 +41,21 @@ public class BusLocationPlotter extends MapViewOverlay {
      */
     public void plotBuses() {
         // TODO: complete the implementation of this method (Task 10)
+        Stop s = StopManager.getInstance().getSelected();
+        HttpBusLocationDataProvider p =  new HttpBusLocationDataProvider(s);
+        if(s!=null) {
+            try {
+                BusParser.parseBuses(s, p.dataSourceToString());
+            } catch (Exception e) {
+                System.out.println("Exception");
+            }
+            List<Bus> buses = s.getBuses();
+            for (Bus b : buses) {
+                OverlayItem i = new OverlayItem(b.getRoute().getName(), b.getDestination(),
+                        Geometry.gpFromLL(b.getLatLon()));
+                busLocationsOverlay.addItem(i);
+            }
+        }
     }
 
     /**
