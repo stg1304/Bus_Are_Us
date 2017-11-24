@@ -282,7 +282,7 @@ public class BusesAreUs extends Activity implements LocationListener, StopSelect
             if (response == null) {
                 Toast.makeText(getApplicationContext(), R.string.api_network, Toast.LENGTH_LONG).show();
             } else if (response.equals("Error")) {
-                Log.d(BusesAreUs.TSA_TAG, "No bus locations data");
+               Log.d(BusesAreUs.TSA_TAG, "No bus locations data");
                 Toast.makeText(getApplicationContext(), "No bus location information available", Toast.LENGTH_LONG).show();
             } else {
                 try {

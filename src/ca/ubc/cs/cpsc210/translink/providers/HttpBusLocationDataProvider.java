@@ -27,8 +27,8 @@ public class HttpBusLocationDataProvider extends AbstractHttpDataProvider {
      */
     protected URL getURL() throws MalformedURLException {
         // TODO: Complete the implementation of this method (Task 10)
-        URL url = new URL("http://api.translink.ca/rttiapi/v1/buses/"+
-                "/estimates?apikey="+ TranslinkToken.TRANSLINK_API_KEY+"&stopNo="+stop.getNumber());
+        URL url = new URL("http://api.translink.ca/rttiapi/v1/buses?apikey="
+                + TranslinkToken.TRANSLINK_API_KEY+"&stopNo="+stop.getNumber());
 
         return url;
     }
