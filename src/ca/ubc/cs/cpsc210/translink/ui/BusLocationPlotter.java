@@ -40,7 +40,6 @@ public class BusLocationPlotter extends MapViewOverlay {
      * Plot buses serving selected stop
      */
     public void plotBuses() {
-        // TODO: complete the implementation of this method (Task 10)
         Stop s = StopManager.getInstance().getSelected();
         HttpBusLocationDataProvider p =  new HttpBusLocationDataProvider(s);
         if(s!=null) {
